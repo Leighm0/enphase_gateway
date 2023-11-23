@@ -21,11 +21,11 @@ Supported Models:
 - IQ Gateway
 - Envoy S Metered
 
-### Configuring the driver
+## Configuring the driver
 
 Enter your Enphase Enlighten Username (e-mail) and Password (**Required if your Envoy is running firmware version 7 or higher**).
 
-#### Properties
+### Properties
 
 **Driver Version**	
 Shows the version of the driver.
@@ -69,7 +69,7 @@ Total power used today in your home (both solar and grid, if any).
 **Excess Solar (kW) (read-only)**	
 Current excess solar available for use.
 
-#### Variables
+### Variables
 
 **PRODUCTION_KW (Int)**	
 Power in kW from the solar panels.  
@@ -92,11 +92,11 @@ If there is currently excess solar.
 **EXCESS_SOLAR_KW (Int)**	
 Excess energy available in kW.
 
-### Limitations
+## Limitations
 
 - Daily energy kWh grid import/export totals are not available currently.
 
-### Release Notes: (BETA Version)
+## Release Notes: (BETA Version)
 
 - **v1**
   - Initial release
