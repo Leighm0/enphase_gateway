@@ -1,4 +1,4 @@
-![enphase_logo]()
+![enphase_logo](https://github.com/Leighm0/enphase_gateway/assets/69341431/893a87f5-618c-4b1d-8c8a-55ec5a7bfd10)
 
 # Enphase Envoy/IQ Gateway Solar Driver
 
