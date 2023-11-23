@@ -1,0 +1,155 @@
+<devicedata>
+	<copyright>Copyright 2023 Welton Cartel. All Rights Reserved.</copyright>
+	<creator>Welton Cartel</creator>
+	<manufacturer>Enphase</manufacturer>
+	<name>Enphase Gateway</name>
+	<model>IQ/Envoy S Metered Gateways</model>
+	<created>11/3/2023 12:00 AM</created>
+	<modified>11/22/2023 12:00 AM</modified>
+	<version>12</version>
+	<control>lua_gen</control>
+	<driver>DriverWorks</driver>
+	<large image_source="c4z">icons\device_lg.png</large>
+	<small image_source="c4z">icons\device_sm.png</small>
+	<proxies>
+		<proxy proxybindingid="5001" name="Enphase Gateway" image_source="c4z" large_image="icons/device_lg.png" small_image="icons/device_sm.png">uibutton</proxy>
+	</proxies>
+	<controlmethod>ip</controlmethod>
+	<composer_categories>
+		<category>Sensors</category>
+	</composer_categories>
+	<navigator_categories>
+		<category>Comfort</category>
+	</navigator_categories>
+	<config>
+		<script file="driver.lua"/>
+		<documentation file="www/documentation/index.html"/>
+		<properties>
+			<property>
+				<name>Driver Name</name>
+				<type>STRING</type>
+				<default/>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Driver Version</name>
+				<type>STRING</type>
+				<default/>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Debug Mode</name>
+				<type>LIST</type>
+				<default>Off</default>
+				<items>
+					<item>Off</item>
+					<item>On</item>
+				</items>
+			</property>
+			<property>
+				<name>Polling Interval</name>
+				<minimum>5</minimum>
+				<maximum>3600</maximum>
+				<default>30</default>
+				<type>RANGED_INTEGER</type>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Username</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Password</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>false</readonly>
+				<password>true</password>
+			</property>
+			<property>
+				<name>Serial Number</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Part Number</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Software Version</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Production (kW)</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Consumption (kW)</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Grid (kW)</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Production Today (kWh)</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Consumption Today (kWh)</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Excess Solar (kW)</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+		</properties>
+	</config>
+	<capabilities>
+		<web_view_url proxybindingid="5001">controller://driver/enphase_gateway/contents/index.html</web_view_url>
+		<mobile_web_view_enabled>true</mobile_web_view_enabled>
+		<navigator_display_option proxybindingid="5001">
+			<display_icons>
+				<Icon height="70" width="70">controller://driver/enphase_gateway/icons/device/default_70.png</Icon>
+				<Icon height="90" width="90">controller://driver/enphase_gateway/icons/device/default_90.png</Icon>
+				<Icon height="300" width="300">controller://driver/enphase_gateway/icons/device/default_300.png</Icon>
+				<Icon height="512" width="512">controller://driver/enphase_gateway/icons/device/default_512.png</Icon>
+			</display_icons>
+		</navigator_display_option>
+	</capabilities>
+	<connections>
+		<connection>
+			<id>5001</id>
+			<facing>6</facing>
+			<connectionname>UIBUTTON</connectionname>
+			<type>2</type>
+			<consumer>False</consumer>
+			<audiosource>False</audiosource>
+			<videosource>False</videosource>
+			<linelevel>False</linelevel>
+			<classes>
+				<class>
+					<classname>UIBUTTON</classname>
+				</class>
+			</classes>
+		</connection>
+	</connections>
+</devicedata>

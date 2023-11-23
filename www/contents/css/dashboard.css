@@ -1,0 +1,264 @@
+@font-face {
+	font-family: Enphase Visuelt;
+	src: url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Regular.40fadd0f.40fadd0f.eot);
+	src: local("Enphase Visuelt Regular"),local("EnphaseVisuelt-Regular"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Regular.40fadd0f.40fadd0f.eot#iefix) format("embedded-opentype"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Regular.5994494b.5994494b.woff2) format("woff2"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Regular.b5093049.b5093049.woff) format("woff"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Regular.fb251007.fb251007.ttf) format("truetype"),url(/images/EnphaseVisuelt-Regular.svg#EnphaseVisuelt-Regular) format("svg");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap
+}
+
+@font-face {
+	font-family: Enphase Visuelt;
+	src: url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Bold.a465f58a.a465f58a.eot);
+	src: local("Enphase Visuelt Bold"),local("EnphaseVisuelt-Bold"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Bold.a465f58a.a465f58a.eot#iefix) format("embedded-opentype"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Bold.f70e5dd5.f70e5dd5.woff2) format("woff2"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Bold.9d2ae044.9d2ae044.woff) format("woff"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Bold.a23479b5.a23479b5.ttf) format("truetype"),url(/images/EnphaseVisuelt-Bold.svg#EnphaseVisuelt-Bold) format("svg");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap
+}
+
+@font-face {
+	font-family: Enphase Visuelt;
+	src: url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-BoldItalic.78c13097.78c13097.eot);
+	src: local("Enphase Visuelt Bold Italic"),local("EnphaseVisuelt-BoldItalic"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-BoldItalic.78c13097.78c13097.eot#iefix) format("embedded-opentype"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-BoldItalic.28fcd5c4.28fcd5c4.woff2) format("woff2"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-BoldItalic.e28139b4.e28139b4.woff) format("woff"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-BoldItalic.3529c8f0.3529c8f0.ttf) format("truetype"),url(/images/EnphaseVisuelt-BoldItalic.svg#EnphaseVisuelt-BoldItalic) format("svg");
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap
+}
+
+@font-face {
+	font-family: Enphase Visuelt;
+	src: url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Italic.25e320d0.25e320d0.eot);
+	src: local("Enphase Visuelt Italic"),local("EnphaseVisuelt-Italic"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Italic.25e320d0.25e320d0.eot#iefix) format("embedded-opentype"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Italic.d4af6914.d4af6914.woff2) format("woff2"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Italic.dc885df8.dc885df8.woff) format("woff"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Italic.973039a1.973039a1.ttf) format("truetype"),url(/images/EnphaseVisuelt-Italic.svg#EnphaseVisuelt-Italic) format("svg");
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap
+}
+
+@font-face {
+	font-family: Enphase Visuelt;
+	src: url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Medium.8ebcbc70.8ebcbc70.eot);
+	src: local("Enphase Visuelt Medium"),local("EnphaseVisuelt-Medium"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Medium.8ebcbc70.8ebcbc70.eot#iefix) format("embedded-opentype"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Medium.bdff56dd.bdff56dd.woff2) format("woff2"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Medium.e922d28d.e922d28d.woff) format("woff"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-Medium.a748a6b8.a748a6b8.ttf) format("truetype"),url(/images/EnphaseVisuelt-Medium.svg#EnphaseVisuelt-Medium) format("svg");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap
+}
+
+@font-face {
+	font-family: Enphase Visuelt;
+	src: url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-MediumItalic.3452a06d.3452a06d.eot);
+	src: local("Enphase Visuelt Medium Italic"),local("EnphaseVisuelt-MediumItalic"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-MediumItalic.3452a06d.3452a06d.eot#iefix) format("embedded-opentype"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-MediumItalic.b6f13b01.b6f13b01.woff2) format("woff2"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-MediumItalic.183b5c4b.183b5c4b.woff) format("woff"),url(https://assets-enlighten.enphaseenergy.com/mobile/static/media/EnphaseVisuelt-MediumItalic.a0d91947.a0d91947.ttf) format("truetype"),url(/images/EnphaseVisuelt-MediumItalic.svg#EnphaseVisuelt-MediumItalic) format("svg");
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap
+}
+
+body {
+	background: #262627;
+	padding: 16px;
+	font-family: "Enphase Visuelt", "Roboto", "Helvectica Neue", Helvetica, Arial, sans-serif;
+}
+
+img {
+	margin: auto;
+	display: block;
+}
+
+h1 {
+	color: #cbced1;
+	font-size: 24px;
+	text-align: center;
+}
+
+h2 {
+	color: #cbced1;
+	font-size: 14px;
+	margin-top: 1;
+}
+
+.container1 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: center;
+	row-gap: 20px;
+	column-gap: 35px;
+	margin-bottom: 40px;
+	margin-top: 40px;
+}
+
+.circle {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	font-weight: normal;
+}
+
+.producing-circle {
+	border: 4px solid #01b4de;
+	box-shadow: 0 0 12px #01b4de;
+}
+
+producing-value-text {
+	margin: 5%;
+	color: #01b4de;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+producing-kw-text {
+	color: #01b4de;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+producing-label {
+	color: #a2a6a9;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.consuming-circle {
+	border: 4px solid #f37320;
+	box-shadow: 0 0 12px #f37320;
+}
+
+consuming-value-text {
+	margin: 5%;
+	color: #f37320;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+consuming-kw-text {
+	color: #f37320;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+consuming-label {
+	color: #a2a6a9;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.grid-circle {
+	border: 4px solid #cbced1;
+	box-shadow: 0 0 12px #cbced1;
+}
+
+grid-value-text {
+	margin: 5%;
+	color: #cbced1;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+grid-kw-text {
+	color: #cbced1;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+grid-label {
+	color: #a2a6a9;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.container2 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 20px;
+	margin-bottom: 60px;
+}
+
+.production-value-box {
+	width: 150;
+	height: 100;
+	text-align: center;
+	border-radius: 15px;
+	background-color: rgba(23, 183, 222, 0.5);
+	float:left;
+	display: flex;
+	flex-direction:column;
+	justify-content: center;
+}
+
+.production-value-box.animate {
+	transform: translateY(20px);
+}
+
+production-value-text {
+	color: #cbced1;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+production-kwh-text {
+	color: #cbced1;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.consumption-value-box {
+	width: 150;
+	height: 100;
+	text-align: center;
+	border-radius: 15px;
+	background-color: rgba(243, 115, 32, 0.5);
+	float:left;
+	display: flex;
+	flex-direction:column;
+	justify-content: center;
+}
+
+.consumption-value-box.animate {
+	transform: translateY(20px);
+}
+
+consumption-value-text {
+	color: #cbced1;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+consumption-kwh-text {
+	color: #cbced1;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.excess-solar-value-box {
+	width: 150;
+	height: 100;
+	text-align: center;
+	border-radius: 15px;
+	background-color: rgba(122, 207, 56, 0.5);
+	float:left;
+	display: flex;
+	flex-direction:column;
+	justify-content: center;
+}
+
+.excess-solar-value-box.animate {
+	transform: translateY(20px);
+}
+
+excess-solar-value-text {
+	color: #cbced1;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+excess-solar-kw-text {
+	color: #cbced1;
+	font-size: 12px;
+	font-weight: normal;
+}

@@ -1,0 +1,65 @@
+<html>
+	<head>
+		<title>Solar Dashboard</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="UTF-8">
+		<script src="javascript/dashboard.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="css/dashboard.css">
+	</head>
+	<body>
+		<h1>Solar Dashboard</h1>
+		<div class="container1">
+			<div class="circle producing-circle">
+				<svg id="producing-svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+					<g transform="translate(3 3)">
+						<path d="M15.526,21.766a6.24,6.24,0,1,0-6.24-6.24A6.24,6.24,0,0,0,15.526,21.766Z" transform="translate(-1.124 -1.126)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-width="1.5"></path>
+						<path d="M15,3.572v2.5" transform="translate(-0.598 -1.651)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+						<path d="M15,24.143v2.5" transform="translate(-0.598 0.241)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+						<path d="M23.228,6.92l-1.76,1.76" transform="translate(-0.003 -1.343)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+						<path d="M8.68,21.469l-1.76,1.76" transform="translate(-1.341 -0.005)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+						<path d="M26.639,15h-2.5" transform="translate(0.243 -0.6)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+						<path d="M6.067,15h-2.5" transform="translate(-1.65 -0.6)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+						<path d="M23.228,23.228l-1.76-1.76" transform="translate(-0.003 -0.005)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+						<path d="M8.68,8.68,6.92,6.92" transform="translate(-1.341 -1.343)" fill="rgba(0,0,0,0)" stroke="#01b4de" stroke-linecap="round" stroke-width="1.5"></path>
+					</g>
+				</svg>			
+				<producing-value-text><span id="producing-power">0.00</span> <producing-kw-text>kW</producing-kw-text></producing-value-text>
+				<producing-label>Producing</producing-label>
+			</div>
+			<div class="circle consuming-circle">
+				<svg id="consuming-svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+					<g transform="translate(3 4)">
+						<path d="M4.058,24a.654.654,0,0,1-.655-.654V12.653H.655a.654.654,0,0,1-.463-1.117L11.536.192a.654.654,0,0,1,.925,0L23.805,11.536a.654.654,0,0,1-.463,1.117H20.594v10.69a.654.654,0,0,1-.655.654Zm15.227-1.309V12a.654.654,0,0,1,.654-.655h1.824L12,1.58,2.235,11.344H4.058A.654.654,0,0,1,4.712,12V22.688H9.073V14.834a.655.655,0,0,1,.655-.655h4.538a.655.655,0,0,1,.654.655v7.854Zm-5.674,0v-7.2H10.383v7.2Z" fill="#f37320" stroke="#f37320" stroke-linecap="round" stroke-width="0.3"></path>
+					</g>
+				</svg>
+				<consuming-value-text><span id="consuming-power">0.00</span> <consuming-kw-text>kW</consuming-kw-text></consuming-value-text>
+				<consuming-label>Consuming</consuming-label>
+			</div>
+			<div class="circle grid-circle">
+				<svg id="grid-svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+					<g transform="translate(-6 -6)">
+						<path d="M18.042 24.293L31.975 37.787L24.642 10.8H21.708L14.375 37.787L28.308 24.293" stroke="#CBCFD2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M34.321 21.36H13.201" stroke="#CBCFD2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+						<path d="M30.802 16.666H15.549" stroke="#CBCFD2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+					</g>
+				</svg>
+				<grid-value-text><span id="grid-power">0.00</span> <grid-kw-text>kW</grid-kw-text></grid-value-text>
+				<grid-label>Grid</grid-label>
+			</div>
+		</div>
+		<div class="container2">
+			<div class="production-value-box">
+				<h2>Production Today</h2>
+				<production-value-text><span id="daily-production">0.00</span> <production-kwh-text>kWh</production-kwh-text></production-value-text>
+			</div>
+			<div class="consumption-value-box">
+				<h2>Consumption Today</h2>
+				<consumption-value-text><span id="daily-consumption">0.00</span> <consumption-kwh-text>kWh</consumption-kwh-text></consumption-value-text>
+			</div>
+			<div class="excess-solar-value-box">
+				<h2>Excess Solar</h2>
+				<excess-solar-value-text><span id="excess-solar">0.00</span> <excess-solar-kw-text>kW</excess-solar-kw-text></excess-solar-value-text>
+			</div>
+		</div>
+	</body>
+</html>
