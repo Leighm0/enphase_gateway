@@ -68,7 +68,7 @@ function OnDriverLateInit()
 		gAuthToken = PersistData.Token
 	end
 	if (Select (PersistData, "Version")) then
-		if (PersistData.Version == 4) then
+		if (PersistData.Version < 7) then
 			gAuth = true
 			gNeedAuth = false
 			APIBase = "http://" .. gEnvoyAddress
@@ -304,7 +304,7 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 						elseif (value.Name == "software") then
 							ver = value.Value
 							check_ver = tonumber(string.sub(ver, 2, 2))
-							if (check_ver == 4) then -- version 4/5 doesnt require https or auth
+							if (check_ver < 7) then -- version 4/5 doesnt require https or auth
 								PersistData.Version = 4
 								APIBase = "http://" .. gEnvoyAddress
 								ReadingsURI = "/production.json"

@@ -133,3 +133,6 @@ Excess energy available in kW.
 
 - **v12**
   - Update to UI Icon and WebView design
+
+- **v13**
+  - Bug fix for version check
