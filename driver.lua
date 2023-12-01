@@ -228,9 +228,7 @@ function GetGatewayInfo()
 end
 
 function GetProductionData()
-	if (gAuth == false) and (gNeedAuth == true) then
-		CreateAuth()
-	end
+	if (gNeedAuth == true) and (gAuth == false) then return end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
 			dbg("GetProductionData(): No Auth Token yet, not continuing.")
@@ -248,9 +246,7 @@ function GetProductionData()
 end
 
 function GetTotals()
-	if (gAuth == false) and (gNeedAuth == true) then
-		CreateAuth()
-	end
+	if (gNeedAuth == true) and (gAuth == false) then return end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
 			dbg("GetProductionData(): No Auth Token yet, not continuing.")
@@ -315,7 +311,7 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 								APIBase = "https://" .. gEnvoyAddress
 								ReadingsURI = "/ivp/meters/readings"
 								gNeedAuth = true
-								CreateAuth()
+								if (gAuthToken == nil) then CreateAuth() end
 							end
 							if (gInit == false) then gInit = true end
 							ENPHASE.SoftwareVersion(ver)
@@ -353,13 +349,18 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 		dbg("GetDataResponse: " .. context.data_type .. " Error 400.")
 	elseif (responseCode == 401) then
 		dbg("GetDataResponse: " .. context.data_type .. " Error 401.")
+		gAuthToken = nil
+		CreateAuth()
 	elseif (responseCode == 404) then
 		dbg("GetDataResponse: " .. context.data_type .. " Error 404.")
 	end
 end
 
 function CreateAuth()
-	if (gAuthUser == nil) or (gAuthPass == nil) or (gEnvoySerial == nil) then return end
+	if (gEnvoySerial == nil) or (gEnvoySerial == "") then return end
+	if (gAuthUser == nil) or (gAuthPass == nil) then return end
+	if (gAuthUser == "") or (gAuthPass == "") then return end
+	if (gAuthToken) then return end
 	local sessionTable = {
 		user = {
 			email = gAuthUser,

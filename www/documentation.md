@@ -136,3 +136,6 @@ Excess energy available in kW.
 
 - **v13**
   - Bug fix for version check
+
+- **v14**
+  - Bug fix for authentication and session token problem

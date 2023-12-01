@@ -134,6 +134,12 @@ Excess energy available in kW.
 - **v12**
   - Update to UI Icon and WebView design
 
+- **v13**
+  - Bug fix for version check
+  
+- **v14**
+  - Bug fix for authentication and session token problem
+
 ## Compiled Driver Available from Releases:
 https://github.com/Leighm0/enphase_gateway/releases
 
