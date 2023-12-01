@@ -139,3 +139,6 @@ Excess energy available in kW.
 
 - **v14**
   - Bug fix for authentication and session token problem
+
+- **v15**
+  - Revamped WebView to use watched Variables instead of DataToUI

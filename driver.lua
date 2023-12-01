@@ -174,14 +174,6 @@ function OPC.Password(value)
 end
 
 --[[=============================================================================
-    Received From Proxy
-===============================================================================]]
-
-function RFP.SELECT()
-	C4:SetTimer(500,function(timer) updateWebUI() end, false)
-end
-
---[[=============================================================================
     Enphase Gateway data functions
 ===============================================================================]]
 
@@ -411,14 +403,12 @@ function ENPHASE.Production(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("PRODUCTION_KW", value)
 	C4:UpdateProperty("Production (kW)", tostring(value))
-	updateWebUI()
 end
 
 function ENPHASE.Consumption(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("CONSUMPTION_KW", value)
 	C4:UpdateProperty("Consumption (kW)", tostring(value))
-	updateWebUI()
 end
 
 function ENPHASE.Grid(consumption_now, production_now)
@@ -432,7 +422,6 @@ function ENPHASE.Grid(consumption_now, production_now)
 		local value = string.format("%.2f", data / 1000)
 		C4:SetVariable("GRID_POWER_KW", value)
 		C4:UpdateProperty("Grid (kW)", tostring(value))
-		updateWebUI()
 	end
 end
 
@@ -440,14 +429,12 @@ function ENPHASE.DailyProduction(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("DAILY_ENERGY_PRODUCTION_KWH", value)
 	C4:UpdateProperty("Production Today (kWh)", tostring(value))
-	updateWebUI()
 end
 
 function ENPHASE.DailyConsumption(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("DAILY_ENERGY_CONSUMPTION_KWH", value)
 	C4:UpdateProperty("Consumption Today (kWh)", tostring(value))
-	updateWebUI()
 end
 
 function ENPHASE.Excess(consumption_now, production_now)
@@ -464,41 +451,5 @@ function ENPHASE.Excess(consumption_now, production_now)
 		C4:SetVariable("EXCESS_SOLAR", excess)
 		C4:SetVariable("EXCESS_SOLAR_KW", value)
 		C4:UpdateProperty("Excess Solar (kW)", tostring(value))
-		updateWebUI()
 	end
-end
-
---[[=============================================================================
-    Send Data to the Web UI
-===============================================================================]]
-
-function updateWebUI()
-	local xml = BuildXmlPacket()
-	C4:SendDataToUI(xml)
-end
-
-function BuildXmlPacket()
-	local properties = {
-		{ tag = "producing-power", value = Variables.PRODUCTION_KW },
-		{ tag = "consuming-power", value = Variables.CONSUMPTION_KW },
-		{ tag = "grid-power", value = Variables.GRID_POWER_KW },
-		{ tag = "daily-production", value = Variables.DAILY_ENERGY_PRODUCTION_KWH },
-		{ tag = "daily-consumption", value = Variables.DAILY_ENERGY_CONSUMPTION_KWH },
-		{ tag = "excess-solar", value = Variables.EXCESS_SOLAR_KW }
-	}
-	local xml = "<data>"
-	for _, property in ipairs(properties) do
-		xml = xml .. BuildSimpleXml(property.tag, property.value)
-	end
-	xml = xml .. "</data>"
-	return xml
-end
-
-function BuildSimpleXml(tag, value)
-	if not value then
-		return ""
-	end
-	local xml = ""
-	xml = xml .. "<" .. tag .. ">" .. value .. "</" .. tag .. ">"
-	return xml
 end

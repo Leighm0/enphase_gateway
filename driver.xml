@@ -6,7 +6,7 @@
 	<model>IQ/Envoy S Metered Gateways</model>
 	<created>11/3/2023 12:00 AM</created>
 	<modified>11/30/2023 12:00 AM</modified>
-	<version>14</version>
+	<version>15</version>
 	<control>lua_gen</control>
 	<driver>DriverWorks</driver>
 	<large image_source="c4z">icons\device_lg.png</large>
