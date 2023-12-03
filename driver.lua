@@ -174,6 +174,14 @@ function OPC.Password(value)
 end
 
 --[[=============================================================================
+    Received From Proxy
+===============================================================================]]
+
+function RFP.SELECT()
+	C4:SetTimer(500,function(timer) updateWebUI() end, false)
+end
+
+--[[=============================================================================
     Enphase Gateway data functions
 ===============================================================================]]
 
@@ -220,7 +228,10 @@ function GetGatewayInfo()
 end
 
 function GetProductionData()
-	if (gNeedAuth == true) and (gAuth == false) then return end
+	if (gNeedAuth == true) and (gAuth == false) then 
+		CreateAuth()
+		return
+	end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
 			dbg("GetProductionData(): No Auth Token yet, not continuing.")
@@ -238,7 +249,10 @@ function GetProductionData()
 end
 
 function GetTotals()
-	if (gNeedAuth == true) and (gAuth == false) then return end
+	if (gNeedAuth == true) and (gAuth == false) then
+		CreateAuth()
+		return
+	end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
 			dbg("GetProductionData(): No Auth Token yet, not continuing.")
@@ -352,7 +366,10 @@ function CreateAuth()
 	if (gEnvoySerial == nil) or (gEnvoySerial == "") then return end
 	if (gAuthUser == nil) or (gAuthPass == nil) then return end
 	if (gAuthUser == "") or (gAuthPass == "") then return end
-	if (gAuthToken) then return end
+	if (gAuthToken) then
+		gAuth = true
+		return
+	end
 	local sessionTable = {
 		user = {
 			email = gAuthUser,
@@ -403,12 +420,14 @@ function ENPHASE.Production(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("PRODUCTION_KW", value)
 	C4:UpdateProperty("Production (kW)", tostring(value))
+	updateWebUI()
 end
 
 function ENPHASE.Consumption(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("CONSUMPTION_KW", value)
 	C4:UpdateProperty("Consumption (kW)", tostring(value))
+	updateWebUI()
 end
 
 function ENPHASE.Grid(consumption_now, production_now)
@@ -422,6 +441,7 @@ function ENPHASE.Grid(consumption_now, production_now)
 		local value = string.format("%.2f", data / 1000)
 		C4:SetVariable("GRID_POWER_KW", value)
 		C4:UpdateProperty("Grid (kW)", tostring(value))
+		updateWebUI()
 	end
 end
 
@@ -429,12 +449,14 @@ function ENPHASE.DailyProduction(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("DAILY_ENERGY_PRODUCTION_KWH", value)
 	C4:UpdateProperty("Production Today (kWh)", tostring(value))
+	updateWebUI()
 end
 
 function ENPHASE.DailyConsumption(data)
 	local value = string.format("%.2f", data / 1000)
 	C4:SetVariable("DAILY_ENERGY_CONSUMPTION_KWH", value)
 	C4:UpdateProperty("Consumption Today (kWh)", tostring(value))
+	updateWebUI()
 end
 
 function ENPHASE.Excess(consumption_now, production_now)
@@ -451,5 +473,41 @@ function ENPHASE.Excess(consumption_now, production_now)
 		C4:SetVariable("EXCESS_SOLAR", excess)
 		C4:SetVariable("EXCESS_SOLAR_KW", value)
 		C4:UpdateProperty("Excess Solar (kW)", tostring(value))
+		updateWebUI()
 	end
+end
+
+--[[=============================================================================
+    Send Data to the Web UI
+===============================================================================]]
+
+function updateWebUI()
+	local xml = BuildXmlPacket()
+	C4:SendDataToUI(xml)
+end
+
+function BuildXmlPacket()
+	local properties = {
+		{ id = "PRODUCTION_KW", value = Variables.PRODUCTION_KW },
+		{ id"CONSUMPTION_KW", value = Variables.CONSUMPTION_KW },
+		{ id = "GRID_POWER_KW", value = Variables.GRID_POWER_KW },
+		{ id = "DAILY_ENERGY_PRODUCTION_KWH", value = Variables.DAILY_ENERGY_PRODUCTION_KWH },
+		{ id = "DAILY_ENERGY_CONSUMPTION_KWH", value = Variables.DAILY_ENERGY_CONSUMPTION_KWH },
+		{ id = "EXCESS_SOLAR_KW", value = Variables.EXCESS_SOLAR_KW }
+	}
+	local xml = "<data>"
+	for _, property in ipairs(properties) do
+		xml = xml .. BuildSimpleXml(property.id, property.value)
+	end
+	xml = xml .. "</data>"
+	return xml
+end
+
+function BuildSimpleXml(id, value)
+	if not value then
+		return ""
+	end
+	local xml = ""
+	xml = xml .. "<" .. id .. ">" .. value .. "</" .. id .. ">"
+	return xml
 end

@@ -142,6 +142,10 @@ Excess energy available in kW.
 
 - **v15**
   - Revamped WebView to use watched Variables instead of DataToUI
+  
+- **v16**
+  - Bug fix for if gAuth gets set back to false
+  - Re-instated DataToUI as a backup if Watched Variable data does not populate in WebView
 
 ## Compiled Driver Available from Releases:
 https://github.com/Leighm0/enphase_gateway/releases
