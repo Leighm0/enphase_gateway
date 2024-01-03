@@ -489,7 +489,7 @@ end
 function BuildXmlPacket()
 	local properties = {
 		{ id = "PRODUCTION_KW", value = Variables.PRODUCTION_KW },
-		{ id"CONSUMPTION_KW", value = Variables.CONSUMPTION_KW },
+		{ id = "CONSUMPTION_KW", value = Variables.CONSUMPTION_KW },
 		{ id = "GRID_POWER_KW", value = Variables.GRID_POWER_KW },
 		{ id = "DAILY_ENERGY_PRODUCTION_KWH", value = Variables.DAILY_ENERGY_PRODUCTION_KWH },
 		{ id = "DAILY_ENERGY_CONSUMPTION_KWH", value = Variables.DAILY_ENERGY_CONSUMPTION_KWH },
