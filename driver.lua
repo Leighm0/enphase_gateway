@@ -108,6 +108,10 @@ function OnDriverLateInit()
 		C4:AddVariable("EXCESS_SOLAR_KW", "", "INT", true, false)
 		C4:SetVariable("EXCESS_SOLAR_KW", "")
 	end
+	if (not (Variables and Variables.CURRENT_VOLTAGE)) then
+		C4:AddVariable("CURRENT_VOLTAGE", "", "INT", true, false)
+		C4:SetVariable("CURRENT_VOLTAGE", "")
+	end
 	for property, _ in pairs(Properties) do
 		OnPropertyChanged(property)
 	end
@@ -328,22 +332,27 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 		elseif (context["data_type"] == "solar-production") then
 			local production_now
 			local consumption_now
+			local voltage_now
 			if (ReadingsURI == "/production.json") then
 				production_now = data["production"][2]["wNow"]
 				consumption_now = data["consumption"][1]["wNow"]
+				voltage_now = data["production"][2]["rmsVoltage"]
 				ENPHASE.Production(production_now)
 				ENPHASE.Consumption(consumption_now)
 				ENPHASE.Grid(production_now, consumption_now)
 				ENPHASE.Excess(production_now, consumption_now)
+				ENPHASE.Voltage(voltage_now)
 			else
 				data = C4:JsonDecode(data)
 				production_now = data[1]["activePower"]
 				consumption_now = data[2]["activePower"]
+				voltage_now = data[1]["voltage"]
 				ENPHASE.Production(production_now)
 				local consumption_calc = tonumber(production_now) + tonumber(consumption_now)
 				ENPHASE.Consumption(consumption_calc)
 				ENPHASE.Grid(consumption_calc, production_now)
 				ENPHASE.Excess(production_now, consumption_calc)
+				ENPHASE.Voltage(voltage_now)
 			end
 		elseif (context["data_type"] == "solar-totals") then
 			local production_today = data["production"][2]["whToday"]
@@ -475,6 +484,11 @@ function ENPHASE.Excess(consumption_now, production_now)
 		C4:UpdateProperty("Excess Solar (kW)", tostring(value))
 		updateWebUI()
 	end
+end
+
+function ENPHASE.Voltage(data)
+	C4:SetVariable("CURRENT_VOLTAGE", data)
+	C4:UpdateProperty("Current Voltage (v)", tostring(data))
 end
 
 --[[=============================================================================

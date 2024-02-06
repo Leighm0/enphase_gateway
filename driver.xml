@@ -5,8 +5,8 @@
 	<name>Enphase Gateway</name>
 	<model>IQ/Envoy S Metered Gateways</model>
 	<created>11/3/2023 12:00 AM</created>
-	<modified>1/3/2024 12:00 AM</modified>
-	<version>17</version>
+	<modified>2/6/2024 12:00 AM</modified>
+	<version>18</version>
 	<control>lua_gen</control>
 	<driver>DriverWorks</driver>
 	<large image_source="c4z">icons\device_lg.png</large>
@@ -117,6 +117,12 @@
 			</property>
 			<property>
 				<name>Excess Solar (kW)</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Current Voltage (v)</name>
 				<default/>
 				<type>STRING</type>
 				<readonly>true</readonly>

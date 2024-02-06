@@ -69,6 +69,9 @@ Total power used today in your home (both solar and grid, if any).
 **Excess Solar (kW) (read-only)**	
 Current excess solar available for use.
 
+**Current Voltage (v) (read-only)**	
+Current voltage reading from the Envoy.
+
 ### Variables
 
 **PRODUCTION_KW (Int)**	
@@ -91,6 +94,9 @@ If there is currently excess solar.
 
 **EXCESS_SOLAR_KW (Int)**	
 Excess energy available in kW.
+
+**CURRENT_VOLTAGE (Int)**	
+Current voltage reading from the Envoy in volts.
 
 ## Limitations
 
@@ -149,6 +155,9 @@ Excess energy available in kW.
 
 - **v17**
   - Bug fix for errors
+
+- **v18**
+  - Added CURRENT_VOLTAGE variable and properties to gather the current voltage reading from the Envoy.
 
 ## Compiled Driver Available from Releases:
 https://github.com/Leighm0/enphase_gateway/releases
