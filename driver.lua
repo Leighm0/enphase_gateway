@@ -112,6 +112,14 @@ function OnDriverLateInit()
 		C4:AddVariable("CURRENT_VOLTAGE", "", "INT", true, false)
 		C4:SetVariable("CURRENT_VOLTAGE", "")
 	end
+	if (not (Variables and Variables.ENPOWER_CONNECTED)) then
+		C4:AddVariable("ENPOWER_CONNECTED", "", "BOOL", true, false)
+		C4:SetVariable("ENPOWER_CONNECTED", "")
+	end
+	if (not (Variables and Variables.GRID_STATUS)) then
+		C4:AddVariable("GRID_STATUS", "", "STRING", true, false)
+		C4:SetVariable("GRID_STATUS", "")
+	end
 	for property, _ in pairs(Properties) do
 		OnPropertyChanged(property)
 	end
@@ -197,6 +205,7 @@ function PollGateway()
 	GetGatewayInfo()
 	GetProductionData()
 	GetTotals()
+	GetGridStatus()
 	SetTimer("PollGateway", gPollInterval * ONE_SECOND)
 end
 
@@ -216,6 +225,7 @@ function InitGateway()
 					GetGatewayInfo()
 					GetProductionData()
 					GetTotals()
+					GetGridStatus()
 				end
 			end
 		end
@@ -259,10 +269,10 @@ function GetTotals()
 	end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
-			dbg("GetProductionData(): No Auth Token yet, not continuing.")
+			dbg("GetTotals(): No Auth Token yet, not continuing.")
 			return
 		elseif (type(gAuthToken) ~= "string") then
-			dbg("GetProductionData(): No Auth Token yet, not continuing.")
+			dbg("GetTotals(): No Auth Token yet, not continuing.")
 			return
 		else
 			HEADERS["Authorization"] = "Bearer " .. gAuthToken
@@ -273,21 +283,30 @@ function GetTotals()
 	urlGet(url, HEADERS, GetDataResponse, { data_type = "solar-totals" }, OPTIONS)
 end
 
+function GetGridStatus()
+	if (gNeedAuth == true) and (gAuth == false) then
+		CreateAuth()
+		return
+	end
+	if (gNeedAuth == true) and (gAuth == true) then
+		if (gAuthToken == nil) then
+			dbg("GetGridStatus(): No Auth Token yet, not continuing.")
+			return
+		elseif (type(gAuthToken) ~= "string") then
+			dbg("GetTotals(): No Auth Token yet, not continuing.")
+			return
+		else
+			HEADERS["Authorization"] = "Bearer " .. gAuthToken
+		end
+	end
+	local url = MakeURL("/home.json")
+	HEADERS["Content-Type"] = "application/json"
+	urlGet(url, HEADERS, GetDataResponse, { data_type = "grid-status" }, OPTIONS)
+end
+
 function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 	if (strError) then
 		dbg("Error GetDataResponse: " .. strError)
-		if string.find("timeout", strError) then
-			if (context["data_type"] == "gateway-info") then
-				dbg("Retrying command...")
-				GetGatewayInfo()
-			elseif (context["data_type"] == "solar-production") then
-				dbg("Retrying command...")
-				GetProductionData()
-			elseif (context["data_type"] == "solar-totals") then
-				dbg("Retrying command...")
-				GetTotals()
-			end
-		end
 		return
 	end
 	if (responseCode == 200) then
@@ -359,6 +378,10 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 			local consumption_today = data["consumption"][1]["whToday"]
 			ENPHASE.DailyProduction(production_today)
 			ENPHASE.DailyConsumption(consumption_today)
+		elseif (context["data_type"] == "grid-status") then
+			local enpower_connected = data["enpower"]["connected"]
+			local grid_status = data["enpower"]["grid_status"]
+			ENPHASE.GridStatus(enpower_connected, grid_status)
 		end
 	elseif (responseCode == 400) then
 		dbg("GetDataResponse: " .. context.data_type .. " Error 400.")
@@ -489,6 +512,19 @@ end
 function ENPHASE.Voltage(data)
 	C4:SetVariable("CURRENT_VOLTAGE", data)
 	C4:UpdateProperty("Current Voltage (v)", tostring(data))
+end
+
+function ENPHASE.GridStatus(enpower_connected, grid_status)
+	local enpower = "0"
+	if (enpower_connected == false) then
+		enpower = "0"
+	else
+		enpower = "1"
+	end
+	C4:SetVariable("ENPOWER_CONNECTED", enpower)
+	C4:SetVariable("GRID_STATUS", tostring(grid_status))
+	C4:UpdateProperty("Enpower Connected", tostring(enpower_connected))
+	C4:UpdateProperty("Grid Status", tostring(grid_status))
 end
 
 --[[=============================================================================

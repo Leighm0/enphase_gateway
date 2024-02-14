@@ -12,6 +12,9 @@ Following values are supported:
 - Grid Power
 - Excess Solar
 - Total values for the day (Production & Consumption)
+- Current Line Voltage
+- Enpower Connected
+- Grid Status
 
 ### Envoy/IQ Gateway requirements
 
@@ -72,6 +75,15 @@ Current excess solar available for use.
 **Current Voltage (v) (read-only)**	
 Current voltage reading from the Envoy.
 
+**Current Voltage (v) (read-only)**	
+Current voltage reading from the Envoy.
+
+**Enpower Connected (read-only)**	
+If there is an Enpower connected to the system. (true/false)
+
+**Grid Status (read-only)**	
+Current Grid Status. (closed/opened)
+
 ### Variables
 
 **PRODUCTION_KW (Int)**	
@@ -97,6 +109,12 @@ Excess energy available in kW.
 
 **CURRENT_VOLTAGE (Int)**	
 Current voltage reading from the Envoy in volts.
+
+**ENPOWER_CONNECTED (Bool)**	
+If there is an Enpower connected to the system. (true/false)
+
+**GRID_STATUS (String)**	
+Current Grid Status. (closed/opened)
 
 ## Limitations
 
@@ -158,6 +176,9 @@ Current voltage reading from the Envoy in volts.
 
 - **v18**
   - Added CURRENT_VOLTAGE variable and properties to gather the current voltage reading from the Envoy.
+  
+- **v19**
+  - Added Enpower & Grid Status variables and properties.
 
 ## Compiled Driver Available from Releases:
 https://github.com/Leighm0/enphase_gateway/releases
