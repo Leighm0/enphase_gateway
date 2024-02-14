@@ -24,6 +24,7 @@ do	--Globals
 	gPollInterval = 30
 	gEnvoyAddress = "0.0.0.0"
 	gEnvoySerial = nil
+	gDiscoveryMode = "auto"
 	gDiscovered = false
 	gAuth = false
 	gNeedAuth = true
@@ -42,6 +43,11 @@ end
 ===============================================================================]]
 
 function OnDriverLateInit()
+	if (Properties["Discovery Mode"] == "Manual") then
+		C4:SetPropertyAttribs("Envoy IP", 0)
+	else
+		C4:SetPropertyAttribs("Envoy IP", 1)
+	end
 	KillAllTimers()
 	C4:urlSetTimeout(20)
 	C4:UpdateProperty("Driver Name", C4:GetDriverConfigInfo("name"))
@@ -156,6 +162,47 @@ function OPC.Debug_Mode(value)
 	end
 end
 
+function OPC.Discovery_Mode(value)
+	gDiscoveryMode = string.lower(value)
+	C4:UpdateProperty("Serial Number", "")
+	C4:UpdateProperty("Part Number", "")
+	C4:UpdateProperty("Software Version", "")
+	C4:UpdateProperty("Production (kW)", "")
+	C4:UpdateProperty("Consumption (kW)", "")
+	C4:UpdateProperty("Grid (kW)", "")
+	C4:UpdateProperty("Production Today (kWh)", "")
+	C4:UpdateProperty("Consumption Today (kWh)", "")
+	C4:UpdateProperty("Excess Solar (kW)", "")
+	C4:UpdateProperty("Current Voltage (v)", "")
+	C4:UpdateProperty("Enpower Connected", "")
+	C4:UpdateProperty("Grid Status", "")
+	if (gDiscoveryMode == "manual") then
+		gDiscovered = false
+		C4:SetPropertyAttribs("Envoy IP", 0)
+	else
+		C4:SetPropertyAttribs("Envoy IP", 1)
+		if (gEnvoyAddress ~= "0.0.0.0") then
+			C4:UpdateProperty("Envoy IP", "0.0.0.0")
+			gEnvoyAddress = "0.0.0.0"
+			gDiscovered = false
+			PersistData.IP = nil
+			InitGateway()
+		end
+	end
+end
+
+function OPC.Envoy_IP(value)
+	if (value == "0.0.0.0") then
+		return
+	end
+	dbg("Gateway manually set to: " .. value)
+	gEnvoyAddress = value
+	APIBase = "http://" .. gEnvoyAddress
+	PersistData.IP = gEnvoyAddress
+	gDiscovered = true
+	PollGateway()
+end
+
 function OPC.Polling_Interval(value)
 	if (value) then
 		gPollInterval = value
@@ -210,28 +257,32 @@ function PollGateway()
 end
 
 function InitGateway()
-	local serviceName = "_enphase-envoy._tcp.local"
-	dbg("Starting MDNS query of " .. serviceName)
-	local res = mdns_query(serviceName)
-	if (res) then
-		for k,v in pairs(res) do
-			for k1,v1 in pairs(v) do
-				if (k1 == "ipv4") then
-					dbg("Gateway found: " .. v1)
-					gEnvoyAddress = v1
-					APIBase = "http://" .. gEnvoyAddress
-					PersistData.IP = gEnvoyAddress
-					gDiscovered = true
-					GetGatewayInfo()
-					GetProductionData()
-					GetTotals()
-					GetGridStatus()
+	if (gDiscoveryMode == "auto") then
+		local serviceName = "_enphase-envoy._tcp.local"
+		dbg("Starting MDNS query of " .. serviceName)
+		local res = mdns_query(serviceName)
+		if (res) then
+			for k,v in pairs(res) do
+				for k1,v1 in pairs(v) do
+					if (k1 == "ipv4") then
+						dbg("Gateway found: " .. v1)
+						gEnvoyAddress = v1
+						APIBase = "http://" .. gEnvoyAddress
+						PersistData.IP = gEnvoyAddress
+						gDiscovered = true
+						PollGateway()
+					end
 				end
 			end
+		else
+			dbg("No MDNS result")
+			gDiscovered = false
 		end
 	else
-		dbg("No MDNS result")
-		gDiscovered = false
+		if (gDiscovered == false) then
+			dbg("Discovery Mode is Manual, please set Envoy IP address in Properties. Otherwise set to Auto.")
+		end
+		return
 	end
 end
 

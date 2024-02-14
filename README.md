@@ -28,6 +28,8 @@ Supported Models:
 
 Enter your Enphase Enlighten Username (e-mail) and Password (**Required if your Envoy is running firmware version 7 or higher**).
 
+NOTE: If you run multiple Envoy gateways, change the Discovery Mode propery to "Manual" and set the Envoy IP to use for this driver instance.
+
 ### Properties
 
 **Driver Version**	
@@ -38,6 +40,12 @@ Set debug mode to On or Off.
 
 **Polling Interval**	
 Choose the time in seconds at which the Gateway should be read for updated data.
+
+**Discovery Mode**
+Choose the Envoy discover mode.  Auto or Manual.
+
+**Envoy IP (Only Available if Discovery Mode is Manual)** 
+If using "Manual" Discovery Mode, enter the Envoy IP address.
 
 **Username**	
 Your Enlighten Username. **Required if firmware is v7 or higher**
@@ -179,6 +187,9 @@ Current Grid Status. (closed/opened)
   
 - **v19**
   - Added Enpower & Grid Status variables and properties.
+
+- **v20**
+  - Added Discovery Mode (Auto/Manual) for the ability to manually set which Envoy IP to use. (Useful if you run multiple Envoy Gateways)
 
 ## Compiled Driver Available from Releases:
 https://github.com/Leighm0/enphase_gateway/releases

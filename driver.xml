@@ -6,7 +6,7 @@
 	<model>IQ/Envoy S Metered Gateways</model>
 	<created>11/3/2023 12:00 AM</created>
 	<modified>2/14/2024 12:00 AM</modified>
-	<version>19</version>
+	<version>20</version>
 	<control>lua_gen</control>
 	<driver>DriverWorks</driver>
 	<large image_source="c4z">icons\device_lg.png</large>
@@ -52,6 +52,21 @@
 				<maximum>3600</maximum>
 				<default>30</default>
 				<type>RANGED_INTEGER</type>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Discovery Mode</name>
+				<type>LIST</type>
+				<default>Auto</default>
+				<items>
+					<item>Auto</item>
+					<item>Manual</item>
+				</items>
+			</property>
+			<property>
+				<name>Envoy IP</name>
+				<default>0.0.0.0</default>
+				<type>STRING</type>
 				<readonly>false</readonly>
 			</property>
 			<property>
