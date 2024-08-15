@@ -430,9 +430,11 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 			ENPHASE.DailyProduction(production_today)
 			ENPHASE.DailyConsumption(consumption_today)
 		elseif (context["data_type"] == "grid-status") then
-			local enpower_connected = data["enpower"]["connected"]
-			local grid_status = data["enpower"]["grid_status"]
-			ENPHASE.GridStatus(enpower_connected, grid_status)
+			if (data["enpower"]) then
+				local enpower_connected = data["enpower"]["connected"]
+				local grid_status = data["enpower"]["grid_status"]
+				ENPHASE.GridStatus(enpower_connected, grid_status)
+			end
 		end
 	elseif (responseCode == 400) then
 		dbg("GetDataResponse: " .. context.data_type .. " Error 400.")

@@ -187,3 +187,6 @@ Current Grid Status. (closed/opened)
 
 - **v20**
   - Added Discovery Mode (Auto/Manual) for the ability to manually set which Envoy IP to use. (Useful if you run multiple Envoy Gateways)
+
+- **v21**
+  - Bug fix for Enpower nil error, Thanks to RollyandSam.

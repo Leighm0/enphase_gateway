@@ -5,8 +5,8 @@
 	<name>Enphase Gateway</name>
 	<model>IQ/Envoy S Metered Gateways</model>
 	<created>11/3/2023 12:00 AM</created>
-	<modified>2/14/2024 12:00 AM</modified>
-	<version>20</version>
+	<modified>8/15/2024 12:00 AM</modified>
+	<version>21</version>
 	<control>lua_gen</control>
 	<driver>DriverWorks</driver>
 	<large image_source="c4z">icons\device_lg.png</large>
