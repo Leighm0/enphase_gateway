@@ -193,3 +193,6 @@ Current Grid Status. (closed/opened)
 
 - **v22**
   - Fixes for Auth flow.
+
+- **v23**
+  - Updated drivers-common-public from SnapOne Github repository.

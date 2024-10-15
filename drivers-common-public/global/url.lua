@@ -1,10 +1,12 @@
 -- Copyright 2023 Snap One, LLC. All rights reserved.
 
-COMMON_URL_VER = 24
+COMMON_URL_VER = 25
 
 JSON = require ('drivers-common-public.module.json')
 
 require ('drivers-common-public.global.lib')
+
+
 
 do	--Globals
 	GlobalTicketHandlers = GlobalTicketHandlers or {}
@@ -349,6 +351,10 @@ function urlDo (method, url, data, headers, callback, context, options)
 	headers = CopyTable (headers) or {}
 
 	data = data or ''
+
+	if (USER_AGENT == nil) then
+		USER_AGENT = 'Control4/' .. C4:GetVersionInfo ().version .. '/' .. C4:GetDriverConfigInfo ('model') .. '/' .. C4:GetDriverConfigInfo ('version')
+	end
 
 	if (headers ['User-Agent'] == nil) then
 		headers ['User-Agent'] = USER_AGENT
