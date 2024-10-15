@@ -294,15 +294,19 @@ end
 
 function GetProductionData()
 	if (gNeedAuth == true) and (gAuth == false) then 
+		gAuthToken = nil
 		CreateAuth()
 		return
 	end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
 			dbg("GetProductionData(): No Auth Token yet, not continuing.")
+			gAuth = false
 			return
 		elseif (type(gAuthToken) ~= "string") then
 			dbg("GetProductionData(): No Auth Token yet, not continuing.")
+			gAuth = false
+			gAuthToken = nil
 			return
 		else
 			HEADERS["Authorization"] = "Bearer " .. gAuthToken
@@ -315,15 +319,19 @@ end
 
 function GetTotals()
 	if (gNeedAuth == true) and (gAuth == false) then
+		gAuthToken = nil
 		CreateAuth()
 		return
 	end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
 			dbg("GetTotals(): No Auth Token yet, not continuing.")
+			gAuth = false
 			return
 		elseif (type(gAuthToken) ~= "string") then
 			dbg("GetTotals(): No Auth Token yet, not continuing.")
+			gAuth = false
+			gAuthToken = nil
 			return
 		else
 			HEADERS["Authorization"] = "Bearer " .. gAuthToken
@@ -336,15 +344,19 @@ end
 
 function GetGridStatus()
 	if (gNeedAuth == true) and (gAuth == false) then
+		gAuthToken = nil
 		CreateAuth()
 		return
 	end
 	if (gNeedAuth == true) and (gAuth == true) then
 		if (gAuthToken == nil) then
 			dbg("GetGridStatus(): No Auth Token yet, not continuing.")
+			gAuth = false
 			return
 		elseif (type(gAuthToken) ~= "string") then
 			dbg("GetTotals(): No Auth Token yet, not continuing.")
+			gAuth = false
+			gAuthToken = nil
 			return
 		else
 			HEADERS["Authorization"] = "Bearer " .. gAuthToken
@@ -440,6 +452,7 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 		dbg("GetDataResponse: " .. context.data_type .. " Error 400.")
 	elseif (responseCode == 401) then
 		dbg("GetDataResponse: " .. context.data_type .. " Error 401.")
+		gAuth = false
 		gAuthToken = nil
 		CreateAuth()
 	elseif (responseCode == 404) then

@@ -193,6 +193,9 @@ Current Grid Status. (closed/opened)
 
 - **v21**
   - Bug fix for Enpower nil error, Thanks to RollyandSam.
+  
+- **v22**
+  - Fixes for Auth flow.
 
 ## Compiled Driver Available from Releases:
 https://github.com/Leighm0/enphase_gateway/releases

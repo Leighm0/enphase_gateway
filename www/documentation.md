@@ -190,3 +190,6 @@ Current Grid Status. (closed/opened)
 
 - **v21**
   - Bug fix for Enpower nil error, Thanks to RollyandSam.
+
+- **v22**
+  - Fixes for Auth flow.
