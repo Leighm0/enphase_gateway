@@ -1,11 +1,14 @@
 -- Copyright 2024 Snap One, LLC. All rights reserved.
 
+Metrics = require ('drivers-common-public.module.metrics')
 require ('drivers-common-public.global.lib')
 
-COMMON_HANDLERS_VER = 27
+COMMON_HANDLERS_VER = 31
 
 do -- define globals
 	DEBUG_RFN = false
+	SSDP = SSDP
+	WebSocket = WebSocket
 end
 
 --[[ Inbound Driver Functions:
@@ -183,6 +186,13 @@ end
 	115	OnEventModified
 	116	OnEventRemoved
 	117	OnZigbeeNetworkHealth
+	118	OnZigbeeDuplicateMesh
+	119	OnConnectionAuthorized
+	120	OnAuthorizedConnectionDisconnected
+	121	OnNetworkBindingAddressChanged
+	122	OnProjectLoading
+	123	OnProjectRestored
+	124	OnZigbeeNetworkBusy
 ]]
 
 do --Globals
@@ -215,6 +225,10 @@ do --Globals
 		LEVEL = true,
 		LIST = true,
 	}
+end
+
+do --Setup Metrics
+	MetricsHandler = Metrics:new ('dcp_handler', COMMON_HANDLERS_VER)
 end
 
 function HandlerDebug (init, tParams, args)
@@ -287,13 +301,16 @@ function ExecuteCommand (strCommand, tParams)
 
 	local success, ret
 
-	if (EC and EC [strCommand] and type (EC [strCommand]) == 'function') then
-		success, ret = pcall (EC [strCommand], tParams)
+	local ecFunction = Select (EC, strCommand)
+
+	if (type (ecFunction) == 'function') then
+		success, ret = pcall (ecFunction, tParams)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_ExecuteCommand')
 		print ('ExecuteCommand error: ', ret, strCommand)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled ExecuteCommand')
@@ -318,13 +335,16 @@ function OnBindingChanged (idBinding, strClass, bIsBound, otherDeviceId, otherBi
 
 	local success, ret
 
-	if (OBC and OBC [idBinding] and type (OBC [idBinding]) == 'function') then
-		success, ret = pcall (OBC [idBinding], idBinding, strClass, bIsBound, otherDeviceId, otherBindingId)
+	local obcFunction = Select (OBC, idBinding)
+
+	if (type (obcFunction) == 'function') then
+		success, ret = pcall (obcFunction, idBinding, strClass, bIsBound, otherDeviceId, otherBindingId)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_OnBindingChanged')
 		print ('OnBindingChanged error: ', ret, idBinding, strClass, bIsBound, otherDeviceId, otherBindingId)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled OnBindingChanged')
@@ -347,13 +367,16 @@ function OnConnectionStatusChanged (idBinding, nPort, strStatus)
 
 	local success, ret
 
-	if (OCS and OCS [idBinding] and type (OCS [idBinding]) == 'function') then
-		success, ret = pcall (OCS [idBinding], idBinding, nPort, strStatus)
+	local ocsFunction = Select (OCS, idBinding)
+
+	if (type (ocsFunction) == 'function') then
+		success, ret = pcall (ocsFunction, idBinding, nPort, strStatus)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_OnConnectionStatusChanged')
 		print ('OnConnectionStatusChanged error: ', ret, idBinding, nPort, strStatus)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled OnConnectionStatusChanged')
@@ -362,6 +385,7 @@ end
 
 function RegisterDeviceEvent (firingDeviceId, eventId, callback)
 	if (firingDeviceId == nil or eventId == nil) then
+		MetricsHandler:SetCounter ('Error_RegisterDeviceEvent')
 		print ('RegisterDeviceEvent error (Invalid idDevice / idVariable): ', tostring (firingDeviceId),
 			tostring (eventId), tostring (callback))
 		return
@@ -375,12 +399,14 @@ function RegisterDeviceEvent (firingDeviceId, eventId, callback)
 		ODE [firingDeviceId] [eventId] = callback
 		C4:RegisterDeviceEvent (firingDeviceId, eventId)
 	else
+		MetricsHandler:SetCounter ('Error_RegisterDeviceEvent')
 		print ('RegisterDeviceEvent error (callback not a function): ', firingDeviceId, eventId, callback)
 	end
 end
 
 function UnregisterDeviceEvent (firingDeviceId, eventId)
 	if (firingDeviceId == nil or eventId == nil) then
+		MetricsHandler:SetCounter ('Error_UnregisterDeviceEvent')
 		print ('UnregisterDeviceEvent error (Invalid idDevice / idVariable): ', tostring (firingDeviceId),
 			tostring (eventId))
 		return
@@ -392,7 +418,7 @@ function UnregisterDeviceEvent (firingDeviceId, eventId)
 		ODE [firingDeviceId] [eventId] = nil
 	end
 
-	if (not next (ODE [firingDeviceId])) then
+	if (ODE [firingDeviceId] and not next (ODE [firingDeviceId])) then
 		ODE [firingDeviceId] = nil
 	end
 end
@@ -410,13 +436,16 @@ function OnDeviceEvent (firingDeviceId, eventId)
 
 	local success, ret
 
-	if (ODE and ODE [firingDeviceId] and ODE [firingDeviceId] [eventId] and type (ODE [firingDeviceId] [eventId]) == 'function') then
-		success, ret = pcall (ODE [firingDeviceId] [eventId], firingDeviceId, eventId)
+	local odeFunction = Select (ODE, firingDeviceId, eventId)
+
+	if (type (odeFunction) == 'function') then
+		success, ret = pcall (odeFunction, firingDeviceId, eventId)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_OnDeviceEvent')
 		print ('OnDeviceEvent error: ', ret, firingDeviceId, eventId)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled OnDeviceEvent')
@@ -425,11 +454,13 @@ end
 
 function UpdateProperty (strProperty, strValue, notifyChange)
 	if (type (strProperty) ~= 'string') then
+		MetricsHandler:SetCounter ('Error_UpdateProperty')
 		print ('UpdateProperty error (strProperty not string): ', tostring (strProperty), tostring (strValue))
 		return
 	end
 
 	if (Properties [strProperty] == nil) then
+		MetricsHandler:SetCounter ('Error_UpdateProperty')
 		print ('UpdateProperty error (Property not present in Properties table): ', tostring (strProperty),
 			tostring (strValue))
 		return
@@ -469,13 +500,16 @@ function OnPropertyChanged (strProperty)
 
 	local success, ret
 
-	if (OPC and OPC [strProperty] and type (OPC [strProperty]) == 'function') then
-		success, ret = pcall (OPC [strProperty], value)
+	local opcFunction = Select (OPC, strProperty)
+
+	if (type (opcFunction) == 'function') then
+		success, ret = pcall (opcFunction, value)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_OnPropertyChanged')
 		print ('OnPropertyChanged error: ', ret, strProperty, value)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled OnPropertyChanged')
@@ -484,6 +518,14 @@ end
 
 function OnSystemEvent (event)
 	local eventName = string.match (event, '.-name="(.-)"')
+
+	if (eventName == 'OnDataToUI') then
+		local luaOutputString = '<devicecommand><command>LUA_OUTPUT</command>'
+		local isLuaOutput = string.match (event, luaOutputString)
+		if (isLuaOutput) then
+			return
+		end
+	end
 
 	local suppressDebug = Select (OSE, 'suppressDebug', eventName)
 
@@ -497,51 +539,47 @@ function OnSystemEvent (event)
 
 	local success, ret
 
-	if (OSE) then
-		eventName = string.gsub (eventName, '%s+', '_')
-		if (OSE [eventName] and type (OSE [eventName]) == 'function') then
-			success, ret = pcall (OSE [eventName], event)
-		end
+	local safeEventName = string.gsub (eventName, '%s+', '_')
+	local oseFunction = Select (OSE, safeEventName)
+
+	if (type (oseFunction) == 'function') then
+		success, ret = pcall (oseFunction, event)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_OnSystemEvent')
 		print ('OnSystemEvent error: ', ret, eventName, event)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled OnSystemEvent')
 	end
 end
 
-function conformVariable (var)
-	local ret
-	if (type (var) == 'boolean') then
-		ret = (var and '1') or '0'
-	elseif (type (var) ~= 'string') then
-		ret = tostring (var)
-	else
-		ret = var
-	end
-	return ret
-end
-
 function AddVariable (strVariable, strValue, varType, readOnly, hidden)
 	if (type (strVariable) ~= 'string') then
+		MetricsHandler:SetCounter ('Error_AddVariable')
 		print ('AddVariable error (Invalid strVariable): ', tostring (strVariable), type (strVariable))
 		return
 	end
 
 	if (type (varType) ~= 'string') then
+		MetricsHandler:SetCounter ('Error_AddVariable')
 		print ('AddVariable error (varType not string): ', tostring (varType), type (varType))
 		return
 	end
 
 	if (not (ValidVarTypes [varType])) then
+		MetricsHandler:SetCounter ('Error_AddVariable')
 		print ('AddVariable error (Invalid varType): ', tostring (varType))
 		return
 	end
 
-	strValue = conformVariable (strValue)
+	if (type (strValue) == 'boolean') then
+		strValue = (strValue and '1') or '0'
+	elseif (type (strValue) ~= 'string') then
+		strValue = tostring (strValue)
+	end
 
 	if (Variables [strVariable]) then
 		SetVariable (strVariable, strValue)
@@ -561,16 +599,22 @@ end
 
 function SetVariable (strVariable, strValue, notifyChange)
 	if (type (strVariable) ~= 'string') then
+		MetricsHandler:SetCounter ('Error_SetVariable')
 		print ('AddVariable error (Invalid strVariable): ', tostring (strVariable), type (strVariable))
 		return
 	end
 
 	if (strValue == nil) then
+		MetricsHandler:SetCounter ('Error_SetVariable')
 		print ('SetVariable error (Invalid strValue): nil')
 		return
 	end
 
-	strValue = conformVariable (strValue)
+	if (type (strValue) == 'boolean') then
+		strValue = (strValue and '1') or '0'
+	elseif (type (strValue) ~= 'string') then
+		strValue = tostring (strValue)
+	end
 
 	if (Variables [strVariable] ~= strValue) then
 		C4:SetVariable (strVariable, strValue)
@@ -601,15 +645,19 @@ function OnVariableChanged (strVariable, variableId)
 
 	local success, ret
 
-	if (OVC and OVC [strVariable] and type (OVC [strVariable]) == 'function') then
-		success, ret = pcall (OVC [strVariable], value)
-	elseif (OVC and OVC [variableId] and type (OVC [variableId]) == 'function') then
-		success, ret = pcall (OVC [variableId], value)
+	local ovcStrVarFunction = Select (OVC, strVariable)
+	local ovcVarIdFunction = Select (OVC, variableId)
+
+	if (type (ovcStrVarFunction) == 'function') then
+		success, ret = pcall (ovcStrVarFunction, value)
+	elseif (type (ovcVarIdFunction) == 'function') then
+		success, ret = pcall (ovcVarIdFunction, value)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_OnVariableChanged')
 		print ('OnVariableChanged error: ', ret, strVariable, value)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled OnVariableChanged')
@@ -618,6 +666,7 @@ end
 
 function RegisterVariableListener (idDevice, idVariable, callback)
 	if (idDevice == nil or idVariable == nil) then
+		MetricsHandler:SetCounter ('Error_RegisterVariableListener')
 		print ('RegisterVariableListener error (Invalid idDevice / idVariable): ', tostring (idDevice),
 			tostring (idVariable), tostring (callback))
 		return
@@ -631,12 +680,14 @@ function RegisterVariableListener (idDevice, idVariable, callback)
 		OWVC [idDevice] [idVariable] = callback
 		C4:RegisterVariableListener (idDevice, idVariable)
 	else
+		MetricsHandler:SetCounter ('Error_RegisterVariableListener')
 		print ('RegisterVariableListener error (callback not a function): ', idDevice, idVariable, callback)
 	end
 end
 
 function UnregisterVariableListener (idDevice, idVariable)
 	if (idDevice == nil or idVariable == nil) then
+		MetricsHandler:SetCounter ('Error_UnregisterVariableListener')
 		print ('UnregisterVariableListener error (Invalid idDevice / idVariable): ', tostring (idDevice),
 			tostring (idVariable))
 		return
@@ -648,7 +699,7 @@ function UnregisterVariableListener (idDevice, idVariable)
 		OWVC [idDevice] [idVariable] = nil
 	end
 
-	if (not next (OWVC [idDevice])) then
+	if (OWVC [idDevice] and not next (OWVC [idDevice])) then
 		OWVC [idDevice] = nil
 	end
 end
@@ -684,6 +735,7 @@ function OnWatchedVariableChanged (idDevice, idVariable, strValue)
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_OnWatchedVariableChanged')
 		print ('OnWatchedVariableChanged error: ', ret, idDevice, idVariable, strValue)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled OnWatchedVariableChanged')
@@ -711,13 +763,16 @@ function ReceivedFromNetwork (idBinding, nPort, strData)
 
 	local success, ret
 
-	if (RFN and RFN [idBinding] and type (RFN [idBinding]) == 'function') then
-		success, ret = pcall (RFN [idBinding], idBinding, nPort, strData)
+	local rfnFunction = Select (RFN, idBinding)
+
+	if (type (rfnFunction) == 'function') then
+		success, ret = pcall (rfnFunction, idBinding, nPort, strData)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_ReceivedFromNetwork')
 		print ('ReceivedFromNetwork error: ', ret, idBinding, nPort, strData)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled ReceivedFromNetwork')
@@ -748,15 +803,19 @@ function ReceivedFromProxy (idBinding, strCommand, tParams)
 
 	local success, ret
 
-	if (RFP and RFP [strCommand] and type (RFP [strCommand]) == 'function') then
-		success, ret = pcall (RFP [strCommand], idBinding, strCommand, tParams, args)
-	elseif (RFP and RFP [idBinding] and type (RFP [idBinding]) == 'function') then
-		success, ret = pcall (RFP [idBinding], idBinding, strCommand, tParams, args)
+	local rfpCommandFunction = Select (RFP, strCommand)
+	local rfpBindingFunction = Select (RFP, idBinding)
+
+	if (type (rfpCommandFunction) == 'function') then
+		success, ret = pcall (rfpCommandFunction, idBinding, strCommand, tParams, args)
+	elseif (type (rfpBindingFunction) == 'function') then
+		success, ret = pcall (rfpBindingFunction, idBinding, strCommand, tParams, args)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_ReceivedFromProxy')
 		print ('ReceivedFromProxy error: ', ret, idBinding, strCommand)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled ReceivedFromProxy')
@@ -778,13 +837,16 @@ function TestCondition (strConditionName, tParams)
 
 	local success, ret
 
-	if (TC and TC [strConditionName] and type (TC [strConditionName]) == 'function') then
-		success, ret = pcall (TC [strConditionName], strConditionName, tParams)
+	local tcFunction = Select (TC, strConditionName)
+
+	if (type (tcFunction) == 'function') then
+		success, ret = pcall (tcFunction, strConditionName, tParams)
 	end
 
 	if (success == true) then
 		return (ret)
 	elseif (success == false) then
+		MetricsHandler:SetCounter ('Error_TestCondition')
 		print ('TestCondition error: ', ret, strConditionName)
 	elseif (DEBUGPRINT) then
 		print ('Unhandled TestCondition')
@@ -806,8 +868,10 @@ function UIRequest (strCommand, tParams)
 
 	local success, ret
 
-	if (UIR and UIR [strCommand] and type (UIR [strCommand]) == 'function') then
-		success, ret = pcall (UIR [strCommand], tParams)
+	local uirFunction = Select (UIR, strCommand)
+
+	if (type (uirFunction) == 'function') then
+		success, ret = pcall (uirFunction, tParams)
 	end
 
 	if (success == true) then

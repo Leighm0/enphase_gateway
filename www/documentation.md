@@ -41,11 +41,8 @@ Set debug mode to On or Off.
 **Polling Interval**	
 Choose the time in seconds at which the Gateway should be read for updated data.
 
-**Discovery Mode**
-Choose the Envoy discover mode.  Auto or Manual.
-
-**Envoy IP (Only Available if Discovery Mode is Manual)** 
-If using "Manual" Discovery Mode, enter the Envoy IP address.
+**Envoy IP** 
+Enter the Envoy IP address.
 
 **Username**	
 Your Enlighten Username. **Required if firmware is v7 or higher**
@@ -124,6 +121,7 @@ Current Grid Status. (closed/opened)
 ### Limitations
 
 - Daily energy kWh grid import/export totals are not available currently.
+- Autodiscover has been removed due to MDNS library obsolete now in Control4 OS 4.0.0
 
 ### Change Log
 
@@ -196,3 +194,8 @@ Current Grid Status. (closed/opened)
 
 - **v23**
   - Updated drivers-common-public from SnapOne Github repository.
+  
+- **v24**
+  - Updated drivers-common-public from SnapOne Github repository.
+  - Removed MDNS Library as it is no longer supported in Control4 OS 4.0.0, will re-implement with code changes in future release.
+  - As part of the MDNS Library removal, manual IP entry is now mandatory, autodiscovery will be added again in future release.

@@ -1,8 +1,8 @@
--- Copyright 2022 Snap One, LLC. All rights reserved.
+-- Copyright 2025 Snap One, LLC. All rights reserved.
 
-COMMON_TIMER_VER = 11
+COMMON_TIMER_VER = 12
 
-do	--Globals
+do --Globals
 	Timer = Timer or {}
 	TimerFunctions = TimerFunctions or {}
 
@@ -52,11 +52,19 @@ end
 function SetTimer (timerId, delay, timerFunction, repeating)
 	CancelTimer (timerId)
 
+	if (type (timerId) == 'nil') then
+		local output = {
+			'SetTimer anonymous timerId',
+			tostring (debug.getinfo(2, 'n').name),
+		}
+		dbg (table.concat (output, ' : '))
+	end
+
 	if (type (timerFunction) ~= 'function') then
 		timerFunction = nil
 	end
 
-	if (delay > ((2^31) - 1)) then
+	if (delay > ((2 ^ 31) - 1)) then
 		print ('Timer not created: ' .. tostring (timerId), 'delay exceeded max value (2^31 - 1)')
 		return
 	end
@@ -138,7 +146,6 @@ function ChangeTimer (timerId, delay, timerFunction, repeating)
 	if (delay == nil) then
 		TimerFunctions [timer] = timerFunction
 		return timer
-
 	else
 		return (SetTimer (timerId, delay, timerFunction, repeating))
 	end

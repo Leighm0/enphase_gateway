@@ -7,7 +7,6 @@ require("drivers-common-public.global.handlers")
 require("drivers-common-public.global.lib")
 require("drivers-common-public.global.url")
 require("drivers-common-public.global.timer")
-require("drivers-common-public.module.mdns")
 
 --[[=============================================================================
     Constants
@@ -24,7 +23,6 @@ do	--Globals
 	gPollInterval = 30
 	gEnvoyAddress = "0.0.0.0"
 	gEnvoySerial = nil
-	gDiscoveryMode = "auto"
 	gDiscovered = false
 	gAuth = false
 	gNeedAuth = true
@@ -43,12 +41,6 @@ end
 ===============================================================================]]
 
 function OnDriverLateInit()
-	if (Properties["Discovery Mode"] == "Manual") then
-		C4:SetPropertyAttribs("Envoy IP", 0)
-	else
-		C4:SetPropertyAttribs("Envoy IP", 1)
-	end
-	KillAllTimers()
 	C4:urlSetTimeout(20)
 	C4:UpdateProperty("Driver Name", C4:GetDriverConfigInfo("name"))
 	C4:UpdateProperty("Driver Version", C4:GetDriverConfigInfo("version"))
@@ -130,7 +122,6 @@ function OnDriverLateInit()
 		OnPropertyChanged(property)
 	end
 	SetTimer("PollGateway", gPollInterval * ONE_SECOND)
-	InitGateway()
 end
 
 function OnDriverDestroyed()
@@ -141,7 +132,7 @@ end
     Properties
 ===============================================================================]]
 
-function OPC.Driver_Version (value)
+function OPC.Driver_Version(value)
 	local version = C4:GetDriverConfigInfo("version")
 	if (not(PRODUCTION)) then
 		version = version .. " [BETA Version]"
@@ -162,40 +153,11 @@ function OPC.Debug_Mode(value)
 	end
 end
 
-function OPC.Discovery_Mode(value)
-	gDiscoveryMode = string.lower(value)
-	C4:UpdateProperty("Serial Number", "")
-	C4:UpdateProperty("Part Number", "")
-	C4:UpdateProperty("Software Version", "")
-	C4:UpdateProperty("Production (kW)", "")
-	C4:UpdateProperty("Consumption (kW)", "")
-	C4:UpdateProperty("Grid (kW)", "")
-	C4:UpdateProperty("Production Today (kWh)", "")
-	C4:UpdateProperty("Consumption Today (kWh)", "")
-	C4:UpdateProperty("Excess Solar (kW)", "")
-	C4:UpdateProperty("Current Voltage (v)", "")
-	C4:UpdateProperty("Enpower Connected", "")
-	C4:UpdateProperty("Grid Status", "")
-	if (gDiscoveryMode == "manual") then
-		gDiscovered = false
-		C4:SetPropertyAttribs("Envoy IP", 0)
-	else
-		C4:SetPropertyAttribs("Envoy IP", 1)
-		if (gEnvoyAddress ~= "0.0.0.0") then
-			C4:UpdateProperty("Envoy IP", "0.0.0.0")
-			gEnvoyAddress = "0.0.0.0"
-			gDiscovered = false
-			PersistData.IP = nil
-			InitGateway()
-		end
-	end
-end
-
 function OPC.Envoy_IP(value)
 	if (value == "0.0.0.0") then
 		return
 	end
-	dbg("Gateway manually set to: " .. value)
+	dbg("Gateway IP set to: " .. value)
 	gEnvoyAddress = value
 	APIBase = "http://" .. gEnvoyAddress
 	PersistData.IP = gEnvoyAddress
@@ -246,7 +208,7 @@ end
 
 function PollGateway()
 	if (gDiscovered == false) then 
-		InitGateway()
+		print("Set the Gateway IP Address!")
 		return 
 	end
 	GetGatewayInfo()
@@ -254,36 +216,6 @@ function PollGateway()
 	GetTotals()
 	GetGridStatus()
 	SetTimer("PollGateway", gPollInterval * ONE_SECOND)
-end
-
-function InitGateway()
-	if (gDiscoveryMode == "auto") then
-		local serviceName = "_enphase-envoy._tcp.local"
-		dbg("Starting MDNS query of " .. serviceName)
-		local res = mdns_query(serviceName)
-		if (res) then
-			for k,v in pairs(res) do
-				for k1,v1 in pairs(v) do
-					if (k1 == "ipv4") then
-						dbg("Gateway found: " .. v1)
-						gEnvoyAddress = v1
-						APIBase = "http://" .. gEnvoyAddress
-						PersistData.IP = gEnvoyAddress
-						gDiscovered = true
-						PollGateway()
-					end
-				end
-			end
-		else
-			dbg("No MDNS result")
-			gDiscovered = false
-		end
-	else
-		if (gDiscovered == false) then
-			dbg("Discovery Mode is Manual, please set Envoy IP address in Properties. Otherwise set to Auto.")
-		end
-		return
-	end
 end
 
 function GetGatewayInfo()
@@ -378,35 +310,39 @@ function GetDataResponse(strError, responseCode, tHeaders, data, context, url)
 			local sn = ""
 			local pn = ""
 			local ver = ""
-			for _, v in pairs(t.ChildNodes) do
-				if (v.Name == "device") then
-					for _, value in pairs(v.ChildNodes) do
-						if (value.Name == "sn") then
-							sn = value.Value
-							gEnvoySerial = sn
-							PersistData.Serial = gEnvoySerial
-							ENPHASE.SerialNumber(sn)
-						elseif (value.Name == "pn") then
-							pn = value.Value
-							ENPHASE.PartNumber(pn)
-						elseif (value.Name == "software") then
-							ver = value.Value
-							check_ver = tonumber(string.sub(ver, 2, 2))
-							if (check_ver < 7) then -- version 4/5 doesnt require https or auth
-								PersistData.Version = 4
-								APIBase = "http://" .. gEnvoyAddress
-								ReadingsURI = "/production.json"
-								gAuth = true
-								gNeedAuth = false
-							else -- version 7 or higher requires https and auth
-								PersistData.Version = 7
-								APIBase = "https://" .. gEnvoyAddress
-								ReadingsURI = "/ivp/meters/readings"
-								gNeedAuth = true
-								if (gAuthToken == nil) then CreateAuth() end
+			if (t.ChildNodes and next(t.ChildNodes)) then
+				for _, v in pairs(t.ChildNodes) do
+					if (v.Name == "device") then
+						if (v.ChildNodes and next(v.ChildNodes)) then
+							for _, value in pairs(v.ChildNodes) do
+								if (value.Name == "sn") then
+									sn = value.Value
+									gEnvoySerial = sn
+									PersistData.Serial = gEnvoySerial
+									ENPHASE.SerialNumber(sn)
+								elseif (value.Name == "pn") then
+									pn = value.Value
+									ENPHASE.PartNumber(pn)
+								elseif (value.Name == "software") then
+									ver = value.Value
+									check_ver = tonumber(string.sub(ver, 2, 2))
+									if (check_ver < 7) then -- version 4/5 doesnt require https or auth
+										PersistData.Version = 4
+										APIBase = "http://" .. gEnvoyAddress
+										ReadingsURI = "/production.json"
+										gAuth = true
+										gNeedAuth = false
+									else -- version 7 or higher requires https and auth
+										PersistData.Version = 7
+										APIBase = "https://" .. gEnvoyAddress
+										ReadingsURI = "/ivp/meters/readings"
+										gNeedAuth = true
+										if (gAuthToken == nil) then CreateAuth() end
+									end
+									if (gInit == false) then gInit = true end
+									ENPHASE.SoftwareVersion(ver)
+								end
 							end
-							if (gInit == false) then gInit = true end
-							ENPHASE.SoftwareVersion(ver)
 						end
 					end
 				end
